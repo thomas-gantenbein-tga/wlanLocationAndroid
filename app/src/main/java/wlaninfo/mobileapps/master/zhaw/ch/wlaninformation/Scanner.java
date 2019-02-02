@@ -1,9 +1,6 @@
 package wlaninfo.mobileapps.master.zhaw.ch.wlaninformation;
 
-import android.app.Activity;
 import android.net.wifi.WifiManager;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
@@ -21,6 +18,10 @@ public class Scanner implements Runnable {
         this.activity = activity;
     }
 
+    public static boolean getScanning() {
+        return Scanner.scanning;
+    }
+
     @Override
     public void run() {
         try {
@@ -29,7 +30,15 @@ public class Scanner implements Runnable {
                 double distance = MainActivity.calculateDistance(averageRssi, wifiManager.getConnectionInfo().getFrequency());
                 DecimalFormat df = new DecimalFormat("###.##");
                 String distanceAsString = df.format(distance);
-                activity.updateUi(averageRssi, distanceAsString);
+                TextView distanceTextView = activity.findViewById(R.id.distance);
+                TextView rssiTextView = activity.findViewById(R.id.rssi);
+
+                activity.runOnUiThread(() ->
+                        {
+                            rssiTextView.setText(String.valueOf(averageRssi));
+                            distanceTextView.setText(distanceAsString);
+                        }
+                );
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -74,23 +73,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startContinuousScan(View view) {
-        Thread thread = new Thread(new Scanner(wifiManager, this));
-        thread.start();
+        if (!Scanner.getScanning()) {
+            Scanner.setScanning(true);
+            Thread thread = new Thread(new Scanner(wifiManager, this));
+            thread.start();
+        }
     }
 
     public void updateUi(int rssi, String distance) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                TextView distanceTextView = findViewById(R.id.distance);
-                distanceTextView.setText(distance);
-                Log.d("lkj", "lkj");
-                TextView rssiTextView = findViewById(R.id.rssi);
-                rssiTextView.setText(String.valueOf(rssi));
+
             }
         });
 
     }
+
 
 
 }

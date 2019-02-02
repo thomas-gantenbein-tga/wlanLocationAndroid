@@ -1,31 +1,20 @@
 package wlaninfo.mobileapps.master.zhaw.ch.wlaninformation;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import java.io.File;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int REQUEST_WIFI = 1;
+    private static int outputPower = 0;
     private WifiManager wifiManager = null;
 
     @Override
@@ -37,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static double calculateDistance(double levelInDb, double freqInMHz) {
-        double exp = (16 + 27.55 - (20 * Math.log10(freqInMHz)) + Math.abs(levelInDb)) / 20.0;
+        double exp = (outputPower + 27.55 - (20 * Math.log10(freqInMHz)) + Math.abs(levelInDb)) / 20.0;
         return Math.pow(10.0, exp);
     }
 
@@ -55,9 +44,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void sampleDistanceOverTime(View view) throws InterruptedException {
         List<Integer> rssiList = new ArrayList<>();
-        for(int i = 0; i < 10; i++) {
-            rssiList.add(wifiManager.getConnectionInfo().getRssi());
-            Thread.sleep(100);
+        while(rssiList.size() < 10) {
+            int rssi = wifiManager.getConnectionInfo().getRssi();
+            if (rssi != 255) {
+                rssiList.add(rssi);
+                Thread.sleep(100);
+            }
         }
         int averageRssi = (int) Math.round(rssiList.stream().mapToDouble(a -> a).average().getAsDouble());
         TextView rssiTextView = findViewById(R.id.rssi);
@@ -70,34 +62,11 @@ public class MainActivity extends AppCompatActivity {
         distanceTextView.setText(distanceAsString);
     }
 
-    public void connect(View view) {
-        TextView ssidTextView = findViewById(R.id.ssid);
-        TextView passwordTextView = findViewById(R.id.password);
-        String networkSSID = ssidTextView.getText().toString();
-        String networkPass = passwordTextView.getText().toString();
+    public void updateOutputPower(View view) {
+        TextView outputPowerTextView = findViewById(R.id.outputPower);
+        int outputPower = Integer.parseInt(outputPowerTextView.getText().toString());
+        MainActivity.outputPower = outputPower;
 
-        WifiConfiguration conf = new WifiConfiguration();
-        conf.SSID = "\"" + networkSSID + "\"";
-        conf.preSharedKey = "\"" + networkPass + "\"";
-
-
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CHANGE_WIFI_STATE) == PackageManager.PERMISSION_DENIED
-                || ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_WIFI_STATE) == PackageManager.PERMISSION_DENIED) {
-            //if not, ask the user for this permission
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CHANGE_WIFI_STATE, Manifest.permission.ACCESS_WIFI_STATE}, REQUEST_WIFI);
-        } else {
-            wifiManager.addNetwork(conf);
-            List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
-            for (WifiConfiguration i : list) {
-                if (i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
-                    wifiManager.disconnect();
-                    wifiManager.enableNetwork(i.networkId, true);
-                    wifiManager.reconnect();
-                }
-            }
-        }
     }
 
     public void stopScan(View view) {

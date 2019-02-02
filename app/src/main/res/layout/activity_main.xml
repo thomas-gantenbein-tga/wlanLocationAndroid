@@ -55,25 +55,15 @@
         app:layout_constraintStart_toStartOf="@+id/distance" />
 
     <EditText
-        android:id="@+id/ssid"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginBottom="6dp"
-        android:text="ZHAW"
-        app:layout_constraintBottom_toTopOf="@+id/password"
-        app:layout_constraintEnd_toEndOf="@+id/password"
-        app:layout_constraintStart_toStartOf="@+id/password" />
-
-    <EditText
-        android:id="@+id/password"
+        android:id="@+id/outputPower"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
-        android:inputType="textPassword"
-        android:text="mBeauti10wrd2"
-        app:layout_constraintBottom_toTopOf="@+id/connect"
-        app:layout_constraintEnd_toEndOf="@+id/connect"
-        app:layout_constraintStart_toStartOf="@+id/connect" />
+        android:inputType="numberDecimal"
+        android:text="16"
+        app:layout_constraintBottom_toTopOf="@+id/update"
+        app:layout_constraintEnd_toEndOf="@+id/update"
+        app:layout_constraintStart_toStartOf="@+id/update" />
 
     <Button
         android:id="@+id/scanOnce"
@@ -127,12 +117,12 @@
         app:layout_constraintTop_toBottomOf="@+id/distance" />
 
     <Button
-        android:id="@+id/connect"
+        android:id="@+id/update"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:onClick="connect"
-        android:text="Verbinden"
+        android:onClick="updateOutputPower"
+        android:text="Aktualisieren"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />

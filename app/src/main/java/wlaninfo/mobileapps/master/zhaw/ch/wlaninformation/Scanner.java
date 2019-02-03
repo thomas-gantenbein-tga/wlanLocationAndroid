@@ -39,6 +39,7 @@ public class Scanner implements Runnable {
                             distanceTextView.setText(distanceAsString);
                         }
                 );
+                Thread.sleep(100);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -51,9 +52,12 @@ public class Scanner implements Runnable {
 
     public int sampleDistanceOverTime() throws InterruptedException {
         List<Integer> rssiList = new ArrayList<>();
-        for(int i = 0; i < 10; i++) {
-            rssiList.add(wifiManager.getConnectionInfo().getRssi());
-            Thread.sleep(100);
+        while(rssiList.size() < 10) {
+            int rssi = wifiManager.getConnectionInfo().getRssi();
+            if (rssi != 255) {
+                rssiList.add(rssi);
+                Thread.sleep(100);
+            }
         }
         return (int) Math.round(rssiList.stream().mapToDouble(a -> a).average().getAsDouble());
 

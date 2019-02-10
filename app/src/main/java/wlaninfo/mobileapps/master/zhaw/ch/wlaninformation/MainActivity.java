@@ -7,23 +7,25 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static int outputPower = 0;
     private Scanner scanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        scanner = new Scanner(this, outputPower);
+        int attenuationParam = 15;
+        scanner = new Scanner(this, attenuationParam);
     }
 
 
     public void sampleDistanceOnce(View view) {
-        scanner.scanOnce();
+        stopScan(view);
+        scanner.scanOnce(1000);
     }
 
     public void sampleDistanceOverTime(View view) throws InterruptedException {
-        scanner.scanOverSomeTime(10, 100);
+        stopScan(view);
+        scanner.scanOverSomeTime(10, 500, 1000);
     }
 
     public void updateOutputPower(View view) {
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public void startContinuousScan(View view) {
         if (!Scanner.getScanning()) {
             Scanner.setScanning(true);
-            scanner.scanContinuously(10, 100);
+            scanner.scanContinuously(10, 500);
         }
     }
 

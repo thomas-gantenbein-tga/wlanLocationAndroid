@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
         android:textSize="36sp"
         app:layout_constraintBottom_toTopOf="@+id/distance"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,8 +25,9 @@
         android:id="@+id/rssi2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="rssi"
+        android:text="Signal in dbm"
         android:textSize="14sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/rssi"
         app:layout_constraintEnd_toEndOf="@+id/rssi"
         app:layout_constraintStart_toStartOf="@+id/rssi" />
@@ -38,6 +40,8 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:text=""
+        android:minWidth="84dp"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,11 +52,24 @@
         android:id="@+id/distance3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="distance"
+        android:text="Distanz"
         android:textSize="14sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/distance"
         app:layout_constraintEnd_toEndOf="@+id/distance"
         app:layout_constraintStart_toStartOf="@+id/distance" />
+
+    <TextView
+        android:id="@+id/distance2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Annahme Sendeleistung + Gain - Dämpfung (dbm) "
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/outputPower"
+        app:layout_constraintEnd_toEndOf="@+id/outputPower"
+        app:layout_constraintStart_toStartOf="@+id/outputPower" />
 
     <EditText
         android:id="@+id/outputPower"
@@ -60,23 +77,11 @@
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
         android:inputType="numberDecimal"
-        android:text="16"
+        android:text="15"
         app:layout_constraintBottom_toTopOf="@+id/update"
         app:layout_constraintEnd_toEndOf="@+id/update"
         app:layout_constraintStart_toStartOf="@+id/update" />
 
-    <Button
-        android:id="@+id/scanOnce"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:onClick="sampleDistanceOnce"
-        android:text="Einmal scannen"
-        app:layout_constraintEnd_toStartOf="@+id/scanAverage"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/distance" />
 
     <Button
         android:id="@+id/scanOnce3"
@@ -85,10 +90,7 @@
         android:layout_marginTop="8dp"
         android:onClick="startContinuousScan"
         android:text="Scan start"
-        app:layout_constraintEnd_toStartOf="@+id/scanOnce4"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/scanOnce"
         app:layout_constraintTop_toBottomOf="@+id/scanOnce" />
 
     <Button
@@ -98,19 +100,31 @@
         android:layout_marginTop="8dp"
         android:onClick="stopScan"
         android:text="Scan Stop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@+id/scanOnce3"
+        app:layout_constraintStart_toStartOf="@+id/scanAverage"
         app:layout_constraintTop_toBottomOf="@+id/scanAverage" />
+
+    <Button
+        android:id="@+id/scanOnce"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="46dp"
+        android:onClick="sampleDistanceOnce"
+        android:text="1x sampeln"
+        app:layout_constraintEnd_toStartOf="@+id/scanAverage"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/distance" />
 
     <Button
         android:id="@+id/scanAverage"
         android:layout_width="wrap_content"
-        android:layout_height="46dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="46dp"
         android:onClick="sampleDistanceOverTime"
-        android:text="Average once"
+        android:text="10x sampeln"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/scanOnce"
@@ -126,5 +140,34 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/minimum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:text="min"
+        android:textAlignment="viewEnd"
+        app:layout_constraintBottom_toBottomOf="@+id/deviation"
+        app:layout_constraintEnd_toStartOf="@+id/deviation" />
+
+    <TextView
+        android:id="@+id/maximum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="max"
+        android:textAlignment="viewStart"
+        app:layout_constraintBottom_toBottomOf="@+id/deviation"
+        app:layout_constraintStart_toEndOf="@+id/deviation" />
+
+    <TextView
+        android:id="@+id/deviation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Streuung"
+        app:layout_constraintEnd_toEndOf="@+id/distance"
+        app:layout_constraintStart_toStartOf="@+id/distance"
+        app:layout_constraintTop_toBottomOf="@+id/distance" />
 
 </android.support.constraint.ConstraintLayout>

@@ -21,6 +21,11 @@ public class Scanner {
     private final TextView deviationTextView;
     private static int loops = 0;
     private static final String MEASURE_NOT_AVAILABLE = "----";
+    private final TextView deviationOverallTextView;
+    private final TextView minimumOverallTextView;
+    private final TextView maximumOverallTextView;
+    private final TextView distanceOverallOverallTextView;
+    private static List<Double> distanceList = new ArrayList<>();
 
 
     private int outputPower;
@@ -35,6 +40,10 @@ public class Scanner {
         maxTextView = activity.findViewById(R.id.maximum);
         minTextView = activity.findViewById(R.id.minimum);
         deviationTextView = activity.findViewById(R.id.deviation);
+        deviationOverallTextView = activity.findViewById(R.id.deviationOverall);
+        minimumOverallTextView = activity.findViewById(R.id.minimumOverall);
+        maximumOverallTextView = activity.findViewById(R.id.maximumOverall);
+        distanceOverallOverallTextView = activity.findViewById(R.id.distanceOverall);
         this.outputPower = outputPower;
         frequency = wifiManager.getConnectionInfo().getFrequency();
     }
@@ -78,7 +87,7 @@ public class Scanner {
             while (scanning) {
                 try {
                     Measurement measurement = sampleRssi(count, inveralInMs);
-                    updateAggregatesOverTime(measurement, count);
+                    updateAggregatesOverTime(measurement);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -121,39 +130,35 @@ public class Scanner {
                     minTextView.setText(MEASURE_NOT_AVAILABLE);
                     maxTextView.setText(MEASURE_NOT_AVAILABLE);
                     deviationTextView.setText(MEASURE_NOT_AVAILABLE);
+                    deviationOverallTextView.setText(MEASURE_NOT_AVAILABLE);
+                    distanceOverallOverallTextView.setText(MEASURE_NOT_AVAILABLE);
+                    maximumOverallTextView.setText(MEASURE_NOT_AVAILABLE);
+                    minimumOverallTextView.setText(MEASURE_NOT_AVAILABLE);
+                    deviationOverallTextView.setText(MEASURE_NOT_AVAILABLE);
                 }
         );
     }
 
-    private void updateAggregatesOverTime(Measurement measurement, int count) {
-        updateCurrentMeasures(measurement);
-
+    private void updateAggregatesOverTime(Measurement measurement) {
+        updateWithAggregates(measurement);
+        distanceList.addAll(measurement.getDistanceList());
         if (loops == 0) {
             updateWithAggregates(measurement);
         } else {
             updateCurrentMeasures(measurement);
-            double minDistancSoFar = Double.parseDouble(minTextView.getText().toString());
-            double minDistanceNow = calculateDistance(measurement.getMaxRssi(), frequency);
 
-            double maxDistancSoFar = Double.parseDouble(maxTextView.getText().toString());
-            double maxDistanceNow = calculateDistance(measurement.getMinRssi(), frequency);
+            double minDistance = distanceList.stream().mapToDouble(a -> a).min().getAsDouble();
+            double maxDistance = distanceList.stream().mapToDouble(a -> a).max().getAsDouble();
+            double averageDistance = distanceList.stream().mapToDouble(a -> a).average().getAsDouble();
             activity.runOnUiThread(() -> {
-                if (minDistanceNow < minDistancSoFar) {
-                    minTextView.setText(formatDistance(minDistanceNow));
-                }
-                if (maxDistanceNow > maxDistancSoFar) {
-                    maxTextView.setText(formatDistance(maxDistanceNow));
-                }
 
-                double deviationSoFar = Double.parseDouble(deviationTextView.getText().toString());
-                double deviationNow = measurement.getAverageAbsoluteDeviation();
-                int measuresBefore = loops * count;
-                double deviationNew = (deviationSoFar * measuresBefore + deviationNow * count) / (measuresBefore + count);
-                deviationTextView.setText(formatDistance(deviationNew));
+                minimumOverallTextView.setText(formatDistance(minDistance));
+                maximumOverallTextView.setText(formatDistance(maxDistance));
+                deviationOverallTextView.setText(formatDistance(getAverageAbsoluteDeviation(distanceList)));
+                distanceOverallOverallTextView.setText(formatDistance(averageDistance));
             });
 
         }
-
         loops++;
     }
 
@@ -183,14 +188,18 @@ public class Scanner {
         int maxRssi = (int) Math.round(rssiList.stream().mapToDouble(a -> a).max().getAsDouble());
 
         List<Double> distanceList = rssiList.stream().map(a -> calculateDistance(a, frequency)).collect(Collectors.toList());
-        double averageDistance = calculateDistance(averageRssi, frequency);
+        double averageAbsoluteDeviation = getAverageAbsoluteDeviation(distanceList);
+        return new Measurement(averageRssi, maxRssi, minRssi, averageAbsoluteDeviation, distanceList);
+    }
+
+    private double getAverageAbsoluteDeviation(List<Double> distanceList) {
+        double averageDistance = distanceList.stream().mapToDouble(a -> a).average().getAsDouble();
         double sumDeviations = 0;
         for (double number : distanceList) {
             sumDeviations += Math.abs(averageDistance - number);
         }
 
-        double averageAbsoluteDeviation = sumDeviations / distanceList.size();
-        return new Measurement(averageRssi, maxRssi, minRssi, averageAbsoluteDeviation);
+        return sumDeviations / distanceList.size();
     }
 
     public static void setScanning(boolean scanning) {
@@ -199,5 +208,13 @@ public class Scanner {
 
     public void setOutputPower(int outputPower) {
         this.outputPower = outputPower;
+    }
+
+    public static String getMeasureNotAvailable() {
+        return MEASURE_NOT_AVAILABLE;
+    }
+
+    public static void clearMeasureList() {
+        distanceList.clear();
     }
 }

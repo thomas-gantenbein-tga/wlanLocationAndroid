@@ -35,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void stopScan(View view) {
         Scanner.setScanning(false);
+        Scanner.clearMeasureList();
+        ((TextView) findViewById(R.id.distanceOverall)).setText(Scanner.getMeasureNotAvailable());
+        ((TextView) findViewById(R.id.minimumOverall)).setText(Scanner.getMeasureNotAvailable());
+        ((TextView) findViewById(R.id.maximumOverall)).setText(Scanner.getMeasureNotAvailable());
+        ((TextView) findViewById(R.id.deviationOverall)).setText(Scanner.getMeasureNotAvailable());
     }
 
     public void startContinuousScan(View view) {

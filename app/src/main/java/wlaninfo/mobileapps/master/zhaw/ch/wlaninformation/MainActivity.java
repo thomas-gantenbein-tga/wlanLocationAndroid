@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        int attenuationParam = 15;
+        int attenuationParam = 8;
         scanner = new Scanner(this, attenuationParam);
     }
 

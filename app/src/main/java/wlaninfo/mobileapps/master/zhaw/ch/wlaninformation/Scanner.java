@@ -140,7 +140,6 @@ public class Scanner {
     }
 
     private void updateAggregatesOverTime(Measurement measurement) {
-        updateWithAggregates(measurement);
         distanceList.addAll(measurement.getDistanceList());
         if (loops == 0) {
             updateWithAggregates(measurement);

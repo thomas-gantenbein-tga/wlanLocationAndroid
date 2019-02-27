@@ -28,10 +28,10 @@ public class Scanner {
     private static List<Double> distanceList = new ArrayList<>();
 
 
-    private int outputPower;
+    private int attenuationParam;
     private final int frequency;
 
-    public Scanner(MainActivity activity, int outputPower) {
+    public Scanner(MainActivity activity, int attenuationParam) {
         this.activity = activity;
         Context context = activity.getApplicationContext();
         wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
@@ -44,7 +44,7 @@ public class Scanner {
         minimumOverallTextView = activity.findViewById(R.id.minimumOverall);
         maximumOverallTextView = activity.findViewById(R.id.maximumOverall);
         distanceOverallOverallTextView = activity.findViewById(R.id.distanceOverall);
-        this.outputPower = outputPower;
+        this.attenuationParam = attenuationParam;
         frequency = wifiManager.getConnectionInfo().getFrequency();
     }
 
@@ -167,8 +167,8 @@ public class Scanner {
         return df.format(distance);
     }
 
-    public double calculateDistance(double levelInDb, double freqInMHz) {
-        double exp = (outputPower + 27.55 - (20 * Math.log10(freqInMHz)) + Math.abs(levelInDb)) / 20.0;
+    public double calculateDistance(double levelInDbm, double freqInMHz) {
+        double exp = (attenuationParam + 27.55 - (20 * Math.log10(freqInMHz)) + Math.abs(levelInDbm)) / 20.0;
         return Math.pow(10.0, exp);
     }
 
@@ -205,8 +205,8 @@ public class Scanner {
         Scanner.scanning = scanning;
     }
 
-    public void setOutputPower(int outputPower) {
-        this.outputPower = outputPower;
+    public void setAttenuationParam(int attenuationParam) {
+        this.attenuationParam = attenuationParam;
     }
 
     public static String getMeasureNotAvailable() {

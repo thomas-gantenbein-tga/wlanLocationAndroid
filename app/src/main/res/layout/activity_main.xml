@@ -122,12 +122,12 @@
         android:text="Annahme Sendeleistung + Gain - Dämpfung (dbm) "
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/outputPower"
-        app:layout_constraintEnd_toEndOf="@+id/outputPower"
-        app:layout_constraintStart_toStartOf="@+id/outputPower" />
+        app:layout_constraintBottom_toTopOf="@+id/attenuationParam"
+        app:layout_constraintEnd_toEndOf="@+id/attenuationParam"
+        app:layout_constraintStart_toStartOf="@+id/attenuationParam" />
 
     <EditText
-        android:id="@+id/outputPower"
+        android:id="@+id/attenuationParam"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:inputType="numberDecimal"

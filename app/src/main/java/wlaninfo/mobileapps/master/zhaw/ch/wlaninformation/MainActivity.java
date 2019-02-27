@@ -28,9 +28,9 @@ public class MainActivity extends AppCompatActivity {
         scanner.scanOverSomeTime(10, 500, 1000);
     }
 
-    public void updateOutputPower(View view) {
-        TextView outputPowerTextView = findViewById(R.id.attenuationParam);
-        scanner.setAttenuationParam(Integer.parseInt(outputPowerTextView.getText().toString()));
+    public void updateAttenuationParam(View view) {
+        TextView attenuationParamTextView = findViewById(R.id.attenuationParam);
+        scanner.setAttenuationParam(Integer.parseInt(attenuationParamTextView.getText().toString()));
     }
 
     public void stopScan(View view) {
